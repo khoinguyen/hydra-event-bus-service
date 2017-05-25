@@ -1,0 +1,25 @@
+{
+  "environment": "development",
+  "hydra": {
+    "serviceName": "hydra-event-bus-service",
+    "serviceIP": "",
+    "servicePort": 0,
+    "serviceType": "hydra-event-bus",
+    "serviceDescription": "Provides the Event Bus for Hydra microservices",
+    "plugins": {
+      "logger": {
+        "logRequests": true,
+        "elasticsearch": {
+          "host": "localhost",
+          "port": 9200,
+          "index": "hydra"
+        }
+      }
+    },
+    "redis": {
+      "url": "127.0.0.1",
+      "port": 6379,
+      "db": 15
+    }
+  }
+}

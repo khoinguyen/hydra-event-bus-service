@@ -1,0 +1,27 @@
+{
+  "name": "hydra-event-bus-service",
+  "version": "0.0.1",
+  "author": "Khoi Nguyen <khoi.nqq@gmail.com>",
+  "private": true,
+  "scripts": {
+    "start": "node hydra-event-bus-service.js",
+    "dev": "nodemon hydra-event-bus-service.js",
+    "debug": "node-debug hydra-event-bus-service.js --debug-brk",
+    "test": "mocha specs --reporter spec",
+    "docker": "node scripts/docker.js"
+  },
+  "engines": {
+    "node": ">=6.2.1"
+  },
+  "dependencies": {
+"fwsp-config": "1.1.5",
+"hydra": "1.4.6",
+"fwsp-logger": "khoinguyen/fwsp-logger",
+"fwsp-jsutils": "1.0.10"  },
+  "devDependencies": {
+    "chai": "3.5.0",
+    "eslint": "3.16.0",
+    "mocha": "3.2.0",
+    "superagent": "3.5.2"
+  }
+}
