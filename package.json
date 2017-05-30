@@ -14,10 +14,12 @@
     "node": ">=6.2.1"
   },
   "dependencies": {
-"fwsp-config": "1.1.5",
-"hydra": "1.4.6",
-"fwsp-logger": "khoinguyen/fwsp-logger",
-"fwsp-jsutils": "1.0.10"  },
+    "fwsp-config": "1.1.5",
+    "fwsp-jsutils": "1.0.10",
+    "fwsp-logger": "khoinguyen/fwsp-logger",
+    "hydra": "1.4.6",
+    "lodash": "^4.17.4"
+  },
   "devDependencies": {
     "chai": "3.5.0",
     "eslint": "3.16.0",
