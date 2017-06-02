@@ -1,6 +1,6 @@
 {
   "name": "hydra-event-bus-service",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "author": "Khoi Nguyen <khoi.nqq@gmail.com>",
   "private": true,
   "scripts": {
@@ -18,7 +18,8 @@
     "fwsp-jsutils": "1.0.10",
     "fwsp-logger": "khoinguyen/fwsp-logger",
     "hydra": "1.4.6",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "micromatch": "^3.0.2"
   },
   "devDependencies": {
     "chai": "3.5.0",

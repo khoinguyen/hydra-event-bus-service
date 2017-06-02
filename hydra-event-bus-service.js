@@ -9,6 +9,7 @@ const _ = require('lodash');
 const version = require('./package.json').version;
 const hydra = require('hydra');
 let config = require('fwsp-config');
+const mm = require('micromatch');
 
 const redis = require('redis');
 const Promise = require('bluebird');
@@ -171,7 +172,7 @@ const dispatchEvent = (umf) => {
   Promise.map(Object.keys(registry), (serviceTag) => {
     const patterns = Array.from(registry[serviceTag]);
     Promise.map(patterns, (pattern) => {
-      if ((new RegExp(pattern)).test(evt)) {
+      if (mm.isMatch(evt, pattern)) {
         return dispatchEventToService(serviceTag, evt, pattern, umf.bdy.payload);
       }
     });
@@ -200,10 +201,9 @@ const dispatchEventToService = (serviceTag, eventName, pattern, payload) => {
 }
 
 const stringifyPattern = (pattern) => {
-  var isValid = true;
   try {
     if (typeof pattern == 'string') {
-      return (new RegExp(pattern)).source;
+      return pattern;
     } else if (typeof pattern == 'object' && pattern instanceof RegExp) {
       return pattern.source;
     }
