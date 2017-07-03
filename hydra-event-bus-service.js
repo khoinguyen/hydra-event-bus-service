@@ -1,13 +1,14 @@
 /**
-* @name Hydra-event-bus
-* @summary Hydra-event-bus Hydra service entry point
-* @description Provides the Event Bus for Hydra microservices
-*/
+ * @name Hydra-event-bus
+ * @summary Hydra-event-bus Hydra service entry point
+ * @description Provides the Event Bus for Hydra microservices
+ */
 'use strict';
 
 const _ = require('lodash');
 const version = require('./package.json').version;
-const hydra = require('hydra');
+var hydra = require('hydra');
+const hydraExpress = require('hydra-express');
 let config = require('fwsp-config');
 const mm = require('micromatch');
 
@@ -26,38 +27,39 @@ const registryPreKey = ebPreKey + ':registry';
 
 const registry = {};
 /**
-* Load configuration file
-*/
+ * Load configuration file
+ */
 config
   .init('./config/config.json')
   .then(() => {
     config.version = version;
     config.hydra.serviceVersion = version;
     /**
-    * Initialize hydra
-    */
-    return hydra.init(config);
-  })
-  .then(() => {
-    hydra.appLogger = hydraLogger.getLogger();
-    hydra.registerService()
+     * Initialize hydra
+     */
+    return hydraExpress.init(config.getObject(), version, () => {
+      hydraExpress.registerRoutes({
+        '/v1/hydra-event-bus': require('./routes/hydra-event-v1-routes')
+      });
+    })
   })
   .then(serviceInfo => {
+    hydra = hydraExpress.getHydra();
     let logEntry = `Starting ${config.hydra.serviceName} (v.${config.version})`;
     hydra.sendToHealthLog('info', logEntry);
     updateAllPatterns().then(() => {
       hydra.sendToHealthLog('info', `Load to local registry patterns for ${Object.keys(registry).length} services with tags`);
     });
     hydra.on('message', (umf) => {
-      if (umf.typ !== 'event-bus') 
+      if (umf.typ !== 'event-bus')
         return;
 
       const body = umf.bdy;
 
-      if (body.type == 'register') 
+      if (body.type == 'register')
         registerPatternsForService(body.patterns, body.serviceTag);
-      
-      if (body.type == 'unregister') 
+
+      if (body.type == 'unregister')
         unregisterPatternsForService(body.patterns, body.serviceTag);
 
       if (body.type == 'changed') {
@@ -67,7 +69,7 @@ config
         }
       }
 
-      if (body.type == 'event') 
+      if (body.type == 'event')
         dispatchEvent(umf);
       }
     );
@@ -76,10 +78,11 @@ config
     hydra.sendToHealthLog('error', err);
   });
 
+
 const registerPatternsForService = (patterns, serviceTag) => {
   const stringifiedPatterns = _.castArray(patterns)
-                                  .map(stringifyPattern)
-                                  .filter((pattern) => pattern !== false);
+    .map(stringifyPattern)
+    .filter((pattern) => pattern !== false);
 
   if (!stringifiedPatterns) return;
 
@@ -87,7 +90,7 @@ const registerPatternsForService = (patterns, serviceTag) => {
 
   Promise.map(stringifiedPatterns, (pattern) => {
     return hydra.redisdb.saddAsync(`${registryPreKey}:${serviceTag}`, pattern);
-  }).then(function() {
+  }).then(function () {
     hydra.sendToHealthLog('info', `Registered ${stringifiedPatterns.length} patterns for ${serviceTag}`);
     notifyUpdate(serviceTag);
   }).catch((err) => {
@@ -97,8 +100,8 @@ const registerPatternsForService = (patterns, serviceTag) => {
 
 const unregisterPatternsForService = (patterns, serviceTag) => {
   const stringifiedPatterns = _.castArray(patterns)
-                                  .map(stringifyPattern)
-                                  .filter((pattern) => pattern !== false);
+    .map(stringifyPattern)
+    .filter((pattern) => pattern !== false);
 
   if (!stringifiedPatterns || !registry[serviceTag]) return;
 
@@ -116,16 +119,16 @@ const unregisterPatternsForService = (patterns, serviceTag) => {
       return hydra.redisdb.saddAsync(`${registryPreKey}:${serviceTag}`, pattern);
     })
   })
-  .then(function() {
-    hydra.sendToHealthLog('info', `Unregistered ${stringifiedPatterns.length} patterns, ${retArr.length} patterns left for ${serviceTag}`);
-    notifyUpdate(serviceTag);
-  }).catch((err) => {
+    .then(function () {
+      hydra.sendToHealthLog('info', `Unregistered ${stringifiedPatterns.length} patterns, ${retArr.length} patterns left for ${serviceTag}`);
+      notifyUpdate(serviceTag);
+    }).catch((err) => {
     hydra.sendToHealthLog('error', err);
   });
 };
 
 const updatePatterns = (serviceTag) => {
-  return hydra.redisdb.smembersAsync(`${registryPreKey}:${serviceTag}`).then(function(patterns) {
+  return hydra.redisdb.smembersAsync(`${registryPreKey}:${serviceTag}`).then(function (patterns) {
     updateLocalRegistry(serviceTag, patterns, true);
   });
 };
@@ -140,16 +143,16 @@ const updateLocalRegistry = (serviceTag, stringifiedPatterns, emptyBeforeUpdate 
   if (!serviceTag || serviceTag.indexOf(':') == -1 || serviceTag.split(':').length != 2) return;
 
   hydra.sendToHealthLog('info', `Update local registry for ${serviceTag}`);
-  
+
   if (!registry[serviceTag] || emptyBeforeUpdate) {
     registry[serviceTag] = new Set();
   }
-  
+
   const patterns = _.castArray(stringifiedPatterns);
-  
+
   for (let pattern of patterns) {
     registry[serviceTag].add(pattern);
-  }  
+  }
 };
 
 const notifyUpdate = (serviceTag) => {
@@ -166,18 +169,18 @@ const notifyUpdate = (serviceTag) => {
   hydra.sendBroadcastMessage(msg);
 };
 
-const dispatchEvent = (umf) => {
-  const evt = umf.bdy.eventName;
+const dispatchEvent = (umf) => _dispatchEvent(umf.bdy.eventName, umf.bdy.payload);
 
+const _dispatchEvent = (evt, payload) => {
   Promise.map(Object.keys(registry), (serviceTag) => {
     const patterns = Array.from(registry[serviceTag]);
     Promise.map(patterns, (pattern) => {
       if (mm.isMatch(evt, pattern)) {
-        return dispatchEventToService(serviceTag, evt, pattern, umf.bdy.payload);
+        return dispatchEventToService(serviceTag, evt, pattern, payload);
       }
     });
   });
-};
+}
 
 const dispatchEventToService = (serviceTag, eventName, pattern, payload) => {
   console.log(`Matched - dispatch to ${serviceTag}`);
@@ -211,3 +214,8 @@ const stringifyPattern = (pattern) => {
     return false;
   }
 }
+
+module.exports = {
+  'dispatchEvent': _dispatchEvent
+};
+
