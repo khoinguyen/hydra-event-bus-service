@@ -15,8 +15,6 @@ const HydraLogger = require('fwsp-logger').HydraLogger;
 let hydraLogger = new HydraLogger();
 hydra.use(hydraLogger);
 
-/* Constants */
-const ebPreKey = 'hydra:event-bus';
 /**
  * Load configuration file
  */

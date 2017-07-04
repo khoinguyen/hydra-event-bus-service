@@ -34,7 +34,7 @@ api.post('/', (req, res) => {
     error.push('event');
   }
   if (!payload) {
-    error.push('payloads');
+    error.push('payload');
   }
 
   if (error.length > 0) {

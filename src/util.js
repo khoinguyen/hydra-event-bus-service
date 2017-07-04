@@ -1,14 +1,17 @@
 /**
  * Created by tranthiennhan on 7/4/17.
  */
+
+const _ = require('lodash');
+const mm = require('micromatch');
+
 const hydraExpress = require('hydra-express');
 const hydra = hydraExpress.getHydra();
 
-const mm = require('micromatch');
-const redis = require('redis');
+
 const Promise = require('bluebird');
-Promise.promisifyAll(redis.RedisClient.prototype);
-const _ = require('lodash');
+Promise.promisifyAll(require('redis').RedisClient.prototype);
+
 
 /* Constants */
 const ebPreKey = 'hydra:event-bus';
@@ -47,7 +50,6 @@ const unregisterPatternsForService = (patterns, serviceTag) => {
   const retArr = Array.from(registry[serviceTag]).filter((pattern) => {
     return !removablePatterns.has(pattern);
   });
-
 
   updateLocalRegistry(serviceTag, retArr, true);
 
