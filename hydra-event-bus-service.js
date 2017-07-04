@@ -6,14 +6,13 @@
 'use strict';
 
 const version = require('./package.json').version;
-// const hydra = require('hydra');
 const hydraExpress = require('hydra-express');
 let config = require('fwsp-config');
 const util = require('./src/util');
-const HydraLogger = require('fwsp-logger').HydraLogger;
+const HydraExpressLogger = require('fwsp-logger').HydraExpressLogger;
 
-let hydraLogger = new HydraLogger();
-hydra.use(hydraLogger);
+let hydraLogger = new HydraExpressLogger();
+hydraExpress.use(hydraLogger);
 
 /**
  * Load configuration file
