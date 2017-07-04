@@ -19,7 +19,9 @@ const registryPreKey = ebPreKey + ':registry';
 const config = require('../config/config.json');
 const registry = {};
 
-const registerPatternsForService = (patterns, serviceTag) => {
+const registerPatternsForService = ({type, patterns, serviceTag}) => {
+  if (!type || type != 'register') return;
+  
   const stringifiedPatterns = _.castArray(patterns)
     .map(stringifyPattern)
     .filter((pattern) => pattern !== false);
@@ -38,7 +40,9 @@ const registerPatternsForService = (patterns, serviceTag) => {
   });
 };
 
-const unregisterPatternsForService = (patterns, serviceTag) => {
+const unregisterPatternsForService = ({type, patterns, serviceTag}) => {
+  if (!type || type != 'unregister') return;
+
   const stringifiedPatterns = _.castArray(patterns)
     .map(stringifyPattern)
     .filter((pattern) => pattern !== false);
@@ -50,6 +54,7 @@ const unregisterPatternsForService = (patterns, serviceTag) => {
   const retArr = Array.from(registry[serviceTag]).filter((pattern) => {
     return !removablePatterns.has(pattern);
   });
+
 
   updateLocalRegistry(serviceTag, retArr, true);
 
@@ -66,7 +71,9 @@ const unregisterPatternsForService = (patterns, serviceTag) => {
   });
 };
 
-const updatePatterns = (serviceTag) => {
+const updatePatterns = ({type, serviceTag}) => {
+  if (!type || type != 'changed') return;
+
   return hydra.redisdb.smembersAsync(`${registryPreKey}:${serviceTag}`).then(function (patterns) {
     updateLocalRegistry(serviceTag, patterns, true);
   });
@@ -109,7 +116,11 @@ const notifyUpdate = (serviceTag) => {
   hydra.sendBroadcastMessage(msg);
 };
 
-const dispatchEventUMF = (umf) => dispatchEvent(umf.bdy.eventName, umf.bdy.payload);
+const dispatchEventUMF = ({type, eventName, payload}) => {
+  if (!type || type != 'event') return;
+
+  return dispatchEvent(eventName, payload);
+}
 
 const dispatchEvent = (evt, payload) => {
   Promise.map(Object.keys(registry), (serviceTag) => {

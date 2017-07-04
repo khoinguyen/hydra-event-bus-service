@@ -6,7 +6,7 @@
 'use strict';
 
 const version = require('./package.json').version;
-const hydra = require('hydra');
+// const hydra = require('hydra');
 const hydraExpress = require('hydra-express');
 let config = require('fwsp-config');
 const util = require('./src/util');
@@ -34,6 +34,7 @@ config
   })
   .then(serviceInfo => {
     let logEntry = `Starting ${config.hydra.serviceName} (v.${config.version})`;
+    const hydra = hydraExpress.getHydra();
     hydra.sendToHealthLog('info', logEntry);
     util.updateAllPatterns();
 
@@ -43,23 +44,15 @@ config
 
       const body = umf.bdy;
 
-      if (body.type == 'register')
-        util.registerPatternsForService(body.patterns, body.serviceTag);
-
-      if (body.type == 'unregister')
-        util.unregisterPatternsForService(body.patterns, body.serviceTag);
-
-      if (body.type == 'changed') {
-        const frmParts = umf.frm.split('@');
-        if (frmParts.length != 2 || frmParts[0] != hydra.instanceID) {
-          util.updatePatterns(body.serviceTag);
-        }
+      util.registerPatternsForService(body);
+      util.unregisterPatternsForService(body);
+      util.dispatchEventUMF(umf.body);
+      
+      const frmParts = umf.frm.split('@');
+      if (frmParts.length != 2 || frmParts[0] != hydra.instanceID) {
+        util.updatePatterns(body.serviceTag);
       }
-
-      if (body.type == 'event')
-        util.dispatchEventUMF(umf);
-      }
-    );
+    });
   })
   .catch((err) => {
     hydra.sendToHealthLog('error', err);
