@@ -8,12 +8,11 @@
 const version = require('./package.json').version;
 const hydraExpress = require('hydra-express');
 let config = require('fwsp-config');
-var hydra = require('hydra');
 const util = require('./src/util');
-const HydraLogger = require('fwsp-logger').HydraExpressLogger;
+const HydraExpressLogger = require('fwsp-logger').HydraExpressLogger;
 
-let hydraLogger = new HydraLogger();
-hydra.use(hydraLogger);
+let hydraLogger = new HydraExpressLogger();
+hydraExpress.use(hydraLogger);
 
 /* Constants */
 const ebPreKey = 'hydra:event-bus';
@@ -36,7 +35,7 @@ config
   })
   .then(serviceInfo => {
     let logEntry = `Starting ${config.hydra.serviceName} (v.${config.version})`;
-    hydra = hydraExpress.getHydra();
+    const hydra = hydraExpress.getHydra();
     hydra.sendToHealthLog('info', logEntry);
     util.updateAllPatterns();
 
