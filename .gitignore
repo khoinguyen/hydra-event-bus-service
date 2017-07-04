@@ -4,4 +4,5 @@
 *.rsa
 node_modules
 config/config.json
+.idea
 

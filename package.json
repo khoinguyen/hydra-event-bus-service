@@ -15,11 +15,12 @@
   },
   "dependencies": {
     "fwsp-config": "1.1.5",
+    "hydra-express": "1.4.8",
+    "lodash": "^4.17.4",
     "fwsp-jsutils": "1.0.10",
     "fwsp-logger": "khoinguyen/fwsp-logger",
-    "hydra": "1.4.6",
-    "lodash": "^4.17.4",
-    "micromatch": "^3.0.2"
+    "micromatch": "^3.0.2",
+    "fwsp-server-response": "2.2.6"
   },
   "devDependencies": {
     "chai": "3.5.0",
