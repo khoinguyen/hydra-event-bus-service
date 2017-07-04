@@ -9,6 +9,7 @@ const hydra = hydraExpress.getHydra();
 const express = hydraExpress.getExpress();
 const ServerResponse = require('fwsp-server-response');
 const eventService = require('../hydra-event-bus-service');
+const util = require('../src/util');
 
 let serverResponse = new ServerResponse();
 express.response.sendError = function (err) {
@@ -25,7 +26,7 @@ api.get('/',
     res.sendOk({greeting: 'Welcome to Hydra Express!'});
   });
 
-api.post('/event-bus', (req, res) => {
+api.post('/', (req, res) => {
   let event = req.body.event;
   let payload = req.body.payload;
   let error = [];
@@ -39,7 +40,7 @@ api.post('/event-bus', (req, res) => {
   if (error.length > 0) {
     return res.sendError('Missing parameters: ' + error.join(','));
   }
-  eventService.dispatchEvent(event, payload);
+  util.dispatchEvent(event, payload);
   return res.sendOk('Emit event successfully')
 });
 
