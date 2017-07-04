@@ -83,7 +83,9 @@ const updateAllPatterns = () => {
   const patternStartPos = registryPreKey.length + 1;
   return hydra.redisdb.keysAsync(`${registryPreKey}:*`).map((pattern) => {
     return pattern.substring(patternStartPos);
-  }).map(updatePatterns);
+  }).map((serviceTag) => {
+    updatePatterns({type: 'changed', serviceTag: serviceTag});
+  });
 
 }
 const updateLocalRegistry = (serviceTag, stringifiedPatterns, emptyBeforeUpdate = false) => {
