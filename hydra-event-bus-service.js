@@ -6,11 +6,11 @@
 'use strict';
 
 const version = require('./package.json').version;
-const hydra = require('hydra');
 const hydraExpress = require('hydra-express');
 let config = require('fwsp-config');
+var hydra = require('hydra');
 const util = require('./src/util');
-const HydraLogger = require('fwsp-logger').HydraLogger;
+const HydraLogger = require('fwsp-logger').HydraExpressLogger;
 
 let hydraLogger = new HydraLogger();
 hydra.use(hydraLogger);
@@ -36,6 +36,7 @@ config
   })
   .then(serviceInfo => {
     let logEntry = `Starting ${config.hydra.serviceName} (v.${config.version})`;
+    hydra = hydraExpress.getHydra();
     hydra.sendToHealthLog('info', logEntry);
     util.updateAllPatterns();
 
