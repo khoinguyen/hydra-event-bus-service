@@ -45,11 +45,11 @@ config
 
       util.registerPatternsForService(body);
       util.unregisterPatternsForService(body);
-      util.dispatchEventUMF(umf.body);
+      util.dispatchEventUMF(body);
       
       const frmParts = umf.frm.split('@');
       if (frmParts.length != 2 || frmParts[0] != hydra.instanceID) {
-        util.updatePatterns(body.serviceTag);
+        util.updatePatterns(body);
       }
     });
   })
