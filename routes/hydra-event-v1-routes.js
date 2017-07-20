@@ -26,7 +26,7 @@ api.get('/',
     res.sendOk({greeting: 'Welcome to Hydra Express!'});
   });
 
-api.post('/', (req, res) => {
+api.post('', (req, res) => {
   let event = req.body.event;
   let payload = req.body.payload;
   let error = [];
