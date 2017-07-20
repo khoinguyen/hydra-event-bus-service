@@ -27,7 +27,7 @@ config
      */
     return hydraExpress.init(config.getObject(), version, () => {
       hydraExpress.registerRoutes({
-        '/v1/hydra-event-bus': require('./routes/hydra-event-v1-routes')
+        '/api/v1/hydra-event-bus': require('./routes/hydra-event-v1-routes')
       });
     })
   })
