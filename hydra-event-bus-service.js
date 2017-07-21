@@ -10,9 +10,10 @@ const hydraExpress = require('hydra-express');
 let config = require('fwsp-config');
 const util = require('./src/util');
 const HydraExpressLogger = require('fwsp-logger').HydraExpressLogger;
-
+const bodyParser = require('body-parser');
 let hydraLogger = new HydraExpressLogger();
 hydraExpress.use(hydraLogger);
+const MAX_POST_SIZE = '5mb';
 
 /**
  * Load configuration file
@@ -25,6 +26,9 @@ config
     /**
      * Initialize hydra
      */
+    const app = hydraExpress.getExpressApp();
+    app.use(bodyParser({limit: MAX_POST_SIZE}));
+
     return hydraExpress.init(config.getObject(), version, () => {
       hydraExpress.registerRoutes({
         '/api/v1/hydra-event-bus': require('./routes/hydra-event-v1-routes')
