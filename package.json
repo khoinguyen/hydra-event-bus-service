@@ -14,13 +14,14 @@
     "node": ">=6.2.1"
   },
   "dependencies": {
-    "fwsp-config": "1.1.5",
-    "hydra-express": "1.4.8",
-    "lodash": "^4.17.4",
+    "fwsp-config": "^1.1.5",
     "fwsp-jsutils": "1.0.10",
-    "fwsp-logger": "khoinguyen/fwsp-logger",
-    "micromatch": "^3.0.2",
-    "fwsp-server-response": "2.2.6"
+    "fwsp-logger": "github:khoinguyen/fwsp-logger",
+    "fwsp-server-response": "^2.2.6",
+    "hydra-express": "^1.4.30",
+    "lodash": "^4.17.4",
+    "micromatch": "^3.1.4",
+    "pino-elasticsearch": "^2.2.1"
   },
   "devDependencies": {
     "chai": "3.5.0",

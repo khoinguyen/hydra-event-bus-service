@@ -27,7 +27,11 @@ config
      * Initialize hydra
      */
     const app = hydraExpress.getExpressApp();
-    app.use(bodyParser({limit: MAX_POST_SIZE}));
+    app.use(bodyParser.urlencoded({limit: MAX_POST_SIZE}));
+    
+    app.use(bodyParser.json({limit: MAX_POST_SIZE}));
+
+    // app.use(bodyParser({limit: MAX_POST_SIZE}));
 
     return hydraExpress.init(config.getObject(), version, () => {
       hydraExpress.registerRoutes({
