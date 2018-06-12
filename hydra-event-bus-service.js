@@ -18,8 +18,9 @@ const MAX_POST_SIZE = '5mb';
 /**
  * Load configuration file
  */
+const configHelper = require('./lib/config-helper');
 config
-  .init('./config/config.json')
+  .init(configHelper)
   .then(() => {
     config.version = version;
     config.hydra.serviceVersion = version;

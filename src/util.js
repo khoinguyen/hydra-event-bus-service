@@ -16,7 +16,7 @@ Promise.promisifyAll(require('redis').RedisClient.prototype);
 /* Constants */
 const ebPreKey = 'hydra:event-bus';
 const registryPreKey = ebPreKey + ':registry';
-const config = require('../config/config.json');
+const config = require('../lib/config-helper');
 const registry = {};
 
 const registerPatternsForService = ({type, patterns, serviceTag}) => {

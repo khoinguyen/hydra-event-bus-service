@@ -4,7 +4,7 @@ FROM node:8.7
 WORKDIR /usr/src/app
 
 COPY package.json package-lock.json ./
-COPY config/ci.config.json config/config.json
+COPY config/k8s-config.json config/config.json
 
 RUN npm install --production
 

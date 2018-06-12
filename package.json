@@ -18,6 +18,7 @@
     "fwsp-jsutils": "1.0.10",
     "fwsp-logger": "github:khoinguyen/fwsp-logger",
     "fwsp-server-response": "^2.2.6",
+    "hydra-env-secret": "^1.0.4",
     "hydra-express": "^1.4.30",
     "lodash": "^4.17.4",
     "micromatch": "^3.1.4",
