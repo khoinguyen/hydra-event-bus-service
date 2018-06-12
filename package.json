@@ -1,6 +1,6 @@
 {
   "name": "hydra-event-bus-service",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Khoi Nguyen <khoi.nqq@gmail.com>",
   "private": true,
   "scripts": {
