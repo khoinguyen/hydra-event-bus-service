@@ -5,42 +5,34 @@
 'use strict';
 
 const hydraExpress = require('hydra-express');
-const hydra = hydraExpress.getHydra();
 const express = hydraExpress.getExpress();
-const ServerResponse = require('fwsp-server-response');
-const eventService = require('../hydra-event-bus-service');
-const util = require('../src/util');
 
-let serverResponse = new ServerResponse();
-express.response.sendError = function (err) {
-  serverResponse.sendServerError(this, {result: {error: err}});
-};
-express.response.sendOk = function (result) {
-  serverResponse.sendOk(this, {result});
-};
+const util = require('../lib/util');
 
 let api = express.Router();
 
 api.get('/',
   (req, res) => {
-    res.sendOk({greeting: 'Welcome to Hydra Express!'});
+    res.sendOk({
+      greeting: 'Welcome to Hydra Express!'
+    });
   });
 
+const getMissingFieldsInRequest = (req) => {
+  const required = ['event', 'payload'];
+
+  return required.filter((field) => typeof req.body[field] === 'undefined');
+}
+
 api.post('', (req, res) => {
-  let event = req.body.event;
-  let payload = req.body.payload;
-  let error = [];
-  if (!event) {
-    error.push('event');
-  }
-  if (!payload) {
-    error.push('payload');
+  const missingFields = getMissingFieldsInRequest(req);
+
+  if (missingFields.length > 0) {
+    return res.sendError('Missing parameters: ' + missingFields.join(','));
   }
 
-  if (error.length > 0) {
-    return res.sendError('Missing parameters: ' + error.join(','));
-  }
-  util.dispatchEvent(event, payload);
+  util.dispatchEvent(req.body.event, req.body.payload);
+
   return res.sendOk('Emit event successfully')
 });
 

@@ -1,6 +1,14 @@
 {
   "env_refs": ["hydra.redis.password"],
   "environment": "development",
+  "bodyParser": {
+    "json": {
+      "limit": "5mb"
+    },
+    "urlencoded": {
+      "limit": "5mb"
+    }
+  },
   "hydra": {
     "serviceName": "hydra-event-bus-service",
     "serviceIP": "",

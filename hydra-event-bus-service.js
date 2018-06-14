@@ -4,64 +4,34 @@
  * @description Provides the Event Bus for Hydra microservices
  */
 'use strict';
-
-const version = require('./package.json').version;
 const hydraExpress = require('hydra-express');
-let config = require('fwsp-config');
-const util = require('./src/util');
-const HydraExpressLogger = require('fwsp-logger').HydraExpressLogger;
-const bodyParser = require('body-parser');
-let hydraLogger = new HydraExpressLogger();
-hydraExpress.use(hydraLogger);
-const MAX_POST_SIZE = '5mb';
 
+const HydraExpressLogger = require('fwsp-logger').HydraExpressLogger;
+hydraExpress.use(new HydraExpressLogger());
+
+const util = require('./lib/util');
+const ServerResponse = require('./lib/express-server-response');
 /**
  * Load configuration file
  */
 const configHelper = require('./lib/config-helper');
-config
-  .init(configHelper)
-  .then(() => {
-    config.version = version;
-    config.hydra.serviceVersion = version;
-    /**
-     * Initialize hydra
-     */
-    const app = hydraExpress.getExpressApp();
-    app.use(bodyParser.urlencoded({limit: MAX_POST_SIZE}));
-    
-    app.use(bodyParser.json({limit: MAX_POST_SIZE}));
-
-    // app.use(bodyParser({limit: MAX_POST_SIZE}));
-
-    return hydraExpress.init(config.getObject(), version, () => {
-      hydraExpress.registerRoutes({
-        '/v1/hydra-event-bus': require('./routes/hydra-event-v1-routes')
-      });
-    })
-  })
-  .then(serviceInfo => {
-    let logEntry = `Starting ${config.hydra.serviceName} (v.${config.version})`;
-    const hydra = hydraExpress.getHydra();
-    hydra.sendToHealthLog('info', logEntry);
-    util.updateAllPatterns();
-
-    hydra.on('message', (umf) => {
-      if (umf.typ !== 'event-bus')
-        return;
-
-      const body = umf.bdy;
-
-      util.registerPatternsForService(body);
-      util.unregisterPatternsForService(body);
-      util.dispatchEventUMF(body);
-      
-      const frmParts = umf.frm.split('@');
-      if (frmParts.length != 2 || frmParts[0] != hydra.instanceID) {
-        util.updatePatterns(body);
-      }
+hydraExpress.init(configHelper, () => {
+    hydraExpress.registerRoutes({
+      '/v1/hydra-event-bus': require('./routes/hydra-event-v1-routes')
     });
   })
+  .then(serviceInfo => {
+    const logEntry = `Starting ${serviceInfo.serviceName} (v.${serviceInfo.serviceVersion})`;
+
+    hydraExpress.log('info', logEntry);
+  }).then(ServerResponse)
+  .then(() => {
+    const hydra = hydraExpress.getHydra();
+
+    util.updateAllPatterns();
+
+    hydra.on('message', util.updatePatternsOnMessageReceived);
+  })
   .catch((err) => {
-    hydra.sendToHealthLog('error', err);
+    hydraExpress.log('error', err);
   });

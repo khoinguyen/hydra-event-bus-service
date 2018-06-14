@@ -14,11 +14,8 @@
     "node": ">=6.2.1"
   },
   "dependencies": {
-    "fwsp-config": "^1.1.5",
-    "fwsp-jsutils": "1.0.10",
     "fwsp-logger": "github:khoinguyen/fwsp-logger",
-    "fwsp-server-response": "^2.2.6",
-    "hydra-env-secret": "^1.0.4",
+    "hydra-env-secret": "^1.0.5",
     "hydra-express": "^1.6.9",
     "lodash": "^4.17.10",
     "micromatch": "^3.1.10",
@@ -27,7 +24,7 @@
   "devDependencies": {
     "chai": "3.5.0",
     "eslint": "3.16.0",
-    "mocha": "3.2.0",
+    "mocha": "^5.2.0",
     "superagent": "^3.8.3"
   }
 }
