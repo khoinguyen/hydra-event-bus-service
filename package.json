@@ -2,7 +2,6 @@
   "name": "hydra-event-bus-service",
   "version": "1.0.3",
   "author": "Khoi Nguyen <khoi.nqq@gmail.com>",
-  "private": true,
   "scripts": {
     "start": "node hydra-event-bus-service.js",
     "dev": "nodemon hydra-event-bus-service.js",
@@ -18,7 +17,7 @@
     "hydra-env-secret": "^1.0.5",
     "hydra-express": "^1.6.9",
     "lodash": "^4.17.10",
-    "micromatch": "^3.1.10",
+    "nanomatch": "^1.2.9",
     "pino-elasticsearch": "^2.2.1"
   },
   "devDependencies": {
