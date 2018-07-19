@@ -1,0 +1,27 @@
+{
+  "env_refs": ["hydra.redis.password"],
+  "environment": "development",
+  "bodyParser": {
+    "json": {
+      "limit": "5mb"
+    },
+    "urlencoded": {
+      "limit": "5mb"
+    }
+  },
+  "hydra": {
+    "serviceName": "hydra-event-bus-service",
+    "serviceIP": "",
+    "servicePort": 3000,
+    "serviceType": "hydra-event-bus",
+    "serviceDescription": "Provides the Event Bus for Hydra microservices",
+    "plugins": {
+    },
+    "redis": {
+      "url": "redis",
+      "port": 6379,
+      "db": 15,
+      "password_ref": "REDIS_PASSWORD"
+    }
+  }
+}

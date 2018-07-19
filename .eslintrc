@@ -2,7 +2,7 @@
   "plugins": ["jasmine"],
   "extends": ["eslint:recommended", "plugin:jasmine/recommended"],
   "parserOptions": {
-    "ecmaVersion": 6,
+    "ecmaVersion": 2017,
     "ecmaFeatures": {
       "jsx": true
     },
