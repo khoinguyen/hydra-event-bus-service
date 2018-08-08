@@ -1,6 +1,6 @@
 {
   "name": "hydra-event-bus-service",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "Khoi Nguyen <khoi.nqq@gmail.com>",
   "scripts": {
     "start": "node hydra-event-bus-service.js",
